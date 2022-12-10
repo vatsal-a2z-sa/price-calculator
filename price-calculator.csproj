@@ -7,4 +7,10 @@
     <Nullable>enable</Nullable>
   </PropertyGroup>
 
+  <ItemGroup>
+    <Reference Include="supplier-base">
+      <HintPath>..\supplier-base\bin\Debug\net6.0\supplier-base.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+
 </Project>
