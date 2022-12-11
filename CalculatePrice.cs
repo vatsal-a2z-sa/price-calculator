@@ -6,9 +6,15 @@ namespace price_calculator
     {
         public List<MarkupDetails> markupDetails { get; set; }
 
-        public Dictionary<string, string> MarkupConfigs { get; set; }
+        //public Dictionary<string, string> MarkupConfigs { get; set; }
 
         public MarkupCalculateParams markupCalculateParams { get; set; }
+
+        public CalculatePrice(List<MarkupDetails> markupDetails, MarkupCalculateParams markupCalculateParams)
+        {
+            this.markupDetails = markupDetails;
+            this.markupCalculateParams = markupCalculateParams;
+        }
         public async Task<List<RateInfo>> process()
         {
             //TODO : Round off Related changes
@@ -21,9 +27,10 @@ namespace price_calculator
             //supplier base amount
             rateInfo.Add(new RateInfo()
             {
-                Amount = markupCalculateParams.supplierAmount,
+                Amount = Convert.ToDecimal(String.Format("{0:.##}", markupCalculateParams.supplierAmount)),
                 CurrencyCode = markupCalculateParams.supplierCurrency,
-                Purpose = RateInfoPurpose.supplierAmount.ToString(),
+                Description = ChargeType.supplierAmount.ToString(),
+                Purpose = ((int)ChargeType.supplierAmount).ToString(),
             });
 
             if (markupCalculateParams.supplierCurrency == markupCalculateParams.agentCurrency)
@@ -31,9 +38,10 @@ namespace price_calculator
                 //agent base amount
                 rateInfo.Add(new RateInfo()
                 {
-                    Amount = markupCalculateParams.supplierAmount,
+                    Amount = Convert.ToDecimal(String.Format("{0:.##}", markupCalculateParams.supplierAmount)),
                     CurrencyCode = markupCalculateParams.supplierCurrency,
-                    Purpose = RateInfoPurpose.baseAmount.ToString(),
+                    Description = ChargeType.baseAmount.ToString(),
+                    Purpose = ((int)ChargeType.baseAmount).ToString(),
                 });
                 agentBaseAmount = markupCalculateParams.supplierAmount;
             }
@@ -48,9 +56,10 @@ namespace price_calculator
                 //portal markup
                 rateInfo.Add(new RateInfo()
                 {
-                    Amount = portalMarkup,
+                    Amount = Convert.ToDecimal(String.Format("{0:.##}", portalMarkup)),
                     CurrencyCode = markupCalculateParams.agentCurrency,
-                    Purpose = RateInfoPurpose.portalMarkup.ToString(),
+                    Description = ChargeType.parentMarkup.ToString(),
+                    Purpose = ((int)ChargeType.parentMarkup).ToString(),
                 });
             }
 
@@ -60,17 +69,19 @@ namespace price_calculator
                 //agent markup
                 rateInfo.Add(new RateInfo()
                 {
-                    Amount = agentMarkup,
+                    Amount = Convert.ToDecimal(String.Format("{0:.##}", agentMarkup)),
                     CurrencyCode = markupCalculateParams.agentCurrency,
-                    Purpose = RateInfoPurpose.portalMarkup.ToString(),
+                    Description = ChargeType.agentMarkup.ToString(),
+                    Purpose = ((int)ChargeType.agentMarkup).ToString(),
                 });
             }
             //total amount
             rateInfo.Add(new RateInfo()
             {
-                Amount = agentBaseAmount + agentTaxAmount + portalMarkup + agentMarkup,
+                Amount = Convert.ToDecimal(String.Format("{0:.##}", agentBaseAmount + agentTaxAmount + portalMarkup + agentMarkup)),
                 CurrencyCode = markupCalculateParams.agentCurrency,
-                Purpose = RateInfoPurpose.totalAmount.ToString(),
+                Description = ChargeType.totalAmount.ToString(),
+                Purpose = ((int)ChargeType.totalAmount).ToString(),
             });
 
             return rateInfo;
